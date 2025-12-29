@@ -1,8 +1,62 @@
 # Audio Setup Guide
 
-To make the music feature work online, you need to host your audio file externally. Here are several free options:
+Your audio file is too large (224MB). Here are the best solutions:
 
-## Option 1: GitHub Releases (Recommended)
+## 🎯 Option 1: Compress Your Audio File (RECOMMENDED)
+
+Compress your `lofi.mp3` to under 10MB while keeping good quality:
+
+### Free Online Compressors:
+1. **FreeConvert** - https://www.freeconvert.com/compress-mp3
+   - Upload your file
+   - Set quality to "Medium" or "High" (not "Best")
+   - Target size: 5-10MB
+   - Download compressed file
+
+2. **CloudConvert** - https://cloudconvert.com/mp3-compress
+   - Similar process, good quality
+
+3. **Audacity** (Desktop App) - https://www.audacityteam.org/
+   - Open your file
+   - File → Export → Export as MP3
+   - Quality: 128 kbps or 192 kbps (good balance)
+   - This will create a much smaller file
+
+**After compression:**
+- Your file should be 5-20MB instead of 224MB
+- Upload to GitHub Releases (supports up to 2GB per file)
+- Or use any free hosting service
+
+---
+
+## 🎵 Option 2: Use Free Music APIs/Services
+
+Use royalty-free music that's already hosted:
+
+### Free Music Sources:
+1. **Free Music Archive** - https://freemusicarchive.org/
+   - Download a smaller lofi track
+   - Many tracks are 2-5MB
+
+2. **Incompetech** - https://incompetech.com/music/royalty-free/
+   - Royalty-free music
+   - Smaller file sizes
+
+3. **YouTube Audio Library** - https://studio.youtube.com/channel/UC/music
+   - Free music for projects
+   - Download smaller versions
+
+4. **Freesound** - https://freesound.org/
+   - Search for "lofi" or "ambient"
+   - Many smaller files available
+
+---
+
+## 🌐 Option 3: Use a Pre-hosted Sample
+
+For quick testing, you can use a free sample URL:
+
+## Option 4: GitHub Releases (After Compression)
 
 1. Go to your repository: https://github.com/yuvi-alt/typing-practice
 2. Click **Releases** → **Create a new release**
@@ -15,7 +69,7 @@ Example:
 const AUDIO_URL = "https://github.com/yuvi-alt/typing-practice/releases/download/v1.0/lofi.mp3";
 ```
 
-## Option 2: Use jsDelivr CDN (if using GitHub)
+## Option 5: Use jsDelivr CDN (if using GitHub)
 
 1. Upload your audio file to a separate GitHub repository
 2. Use jsDelivr format:
@@ -23,7 +77,7 @@ const AUDIO_URL = "https://github.com/yuvi-alt/typing-practice/releases/download
 const AUDIO_URL = "https://cdn.jsdelivr.net/gh/your-username/your-audio-repo@main/lofi.mp3";
 ```
 
-## Option 3: Free File Hosting Services
+## Option 6: Free File Hosting Services
 
 Upload to any of these free services and use the direct link:
 
@@ -32,13 +86,9 @@ Upload to any of these free services and use the direct link:
 - **Google Drive**: Upload file, get shareable link, convert to direct download
 - **Dropbox**: Upload, get shareable link, convert to direct download
 
-## Option 4: Use a Smaller Audio File
+## Option 7: Disable Music Feature
 
-1. Compress your audio file to under 100MB
-2. Use an online compressor like: https://www.freeconvert.com/compress-mp3
-3. Upload the compressed file to one of the services above
-
-## Option 5: Use Online Music API
+If you don't want to deal with audio hosting, the app works perfectly without music. The music button will simply be disabled, and users can still use all typing features.
 
 You can also use a music streaming service API, but this requires more setup.
 

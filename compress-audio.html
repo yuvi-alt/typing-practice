@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Compressor Helper</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #0a0a0a;
+      color: #e0e0e0;
+    }
+    h1 { color: #a7f3d0; }
+    .step {
+      background: #1a1a1a;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    .step h2 { color: #c7d2fe; margin-top: 0; }
+    a { color: #a7f3d0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #0a0a0a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fca5a5;
+    }
+    .recommended { border-color: #a7f3d0; }
+  </style>
+</head>
+<body>
+  <h1>🎵 Audio Compression Guide</h1>
+  
+  <div class="step recommended">
+    <h2>✅ Recommended: Compress Your Audio</h2>
+    <p>Your file is 224MB. Compress it to 5-10MB for web use.</p>
+    
+    <h3>Quick Online Tools:</h3>
+    <ul>
+      <li><a href="https://www.freeconvert.com/compress-mp3" target="_blank">FreeConvert MP3 Compressor</a> - Easiest option</li>
+      <li><a href="https://cloudconvert.com/mp3-compress" target="_blank">CloudConvert</a> - Good quality</li>
+      <li><a href="https://www.youcompress.com/" target="_blank">YouCompress</a> - Simple interface</li>
+    </ul>
+    
+    <h3>Settings to Use:</h3>
+    <ul>
+      <li><strong>Bitrate:</strong> 128 kbps or 192 kbps (good balance)</li>
+      <li><strong>Quality:</strong> Medium to High (not Best)</li>
+      <li><strong>Target Size:</strong> 5-10MB</li>
+    </ul>
+    
+    <p><strong>Result:</strong> Your 224MB file will become ~5-10MB with minimal quality loss for background music!</p>
+  </div>
+  
+  <div class="step">
+    <h2>🎧 Alternative: Use Free Lofi Music</h2>
+    <p>Download a smaller royalty-free lofi track instead:</p>
+    <ul>
+      <li><a href="https://freemusicarchive.org/genre/Lo-Fi/" target="_blank">Free Music Archive - Lo-Fi</a></li>
+      <li><a href="https://incompetech.com/music/royalty-free/" target="_blank">Incompetech</a> - Search "lofi"</li>
+      <li><a href="https://freesound.org/search/?q=lofi" target="_blank">Freesound</a> - Many options</li>
+    </ul>
+    <p>Most tracks are 2-5MB - perfect for web!</p>
+  </div>
+  
+  <div class="step">
+    <h2>📤 After Compression: Upload to GitHub Releases</h2>
+    <ol>
+      <li>Go to: <code>https://github.com/yuvi-alt/typing-practice/releases</code></li>
+      <li>Click "Create a new release"</li>
+      <li>Tag: <code>v1.0</code></li>
+      <li>Drag your compressed MP3 file</li>
+      <li>Publish release</li>
+      <li>Copy the download URL</li>
+      <li>Add it to <code>app.js</code> as <code>AUDIO_URL</code></li>
+    </ol>
+  </div>
+  
+  <div class="step">
+    <h2>🚫 Or: Disable Music</h2>
+    <p>The app works perfectly without music! Users can still use all typing features. The music button will just be disabled.</p>
+  </div>
+</body>
+</html>
+

@@ -3,7 +3,9 @@
 // Option 1: YouTube Video ID (RECOMMENDED - No file hosting needed!)
 // Get the video ID from a YouTube URL: https://www.youtube.com/watch?v=VIDEO_ID
 // Example: "jfKfPfyJRdk" from https://www.youtube.com/watch?v=jfKfPfyJRdk
-const YOUTUBE_VIDEO_ID = "5qap5aO4i9A"; // Lofi Girl - 24/7 lofi hip hop radio
+// Try a different video that allows embedding
+// If this doesn't work, try: "jfKfPfyJRdk" or disable ad blocker
+const YOUTUBE_VIDEO_ID = "jfKfPfyJRdk"; // Lofi hip hop radio - usually allows embedding
 
 // Option 2: Direct audio file URL (if you have a hosted file)
 const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
@@ -299,13 +301,23 @@ window.onYouTubeIframeAPIReady = function() {
               }
             }
           },
-          onError: function(event) {
-            console.error('YouTube player error:', event.data);
-            state.musicOn = false;
-            updateMusicButton();
-            els.musicBtn.disabled = true;
-            els.musicBtn.title = "YouTube player error";
+        onError: function(event) {
+          console.error('YouTube player error:', event.data);
+          // Error 150 = video doesn't allow embedding
+          // Error 101 = video not available in your country
+          // Error 100 = video not found
+          let errorMsg = "YouTube player error";
+          if (event.data === 150) {
+            errorMsg = "Video doesn't allow embedding. Try disabling ad blocker or use a different video.";
+          } else if (event.data === 101 || event.data === 100) {
+            errorMsg = "Video not available. Try a different video ID.";
           }
+          state.musicOn = false;
+          updateMusicButton();
+          els.musicBtn.disabled = true;
+          els.musicBtn.title = errorMsg;
+          console.warn(errorMsg + " (Error code: " + event.data + ")");
+        }
         }
       });
     } catch (err) {

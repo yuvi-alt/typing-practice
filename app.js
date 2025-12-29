@@ -295,10 +295,13 @@ window.onYouTubeIframeAPIReady = function() {
             console.log('YouTube player state:', event.data);
             // Handle player state changes
             if (event.data === YT.PlayerState.ENDED) {
-              // Video ended, restart if looping
+              // Video ended, restart if looping and music is on
               if (state.musicOn) {
                 event.target.playVideo();
               }
+            } else if (event.data === YT.PlayerState.PLAYING && !state.musicOn) {
+              // If video is playing but music should be off, pause it
+              event.target.pauseVideo();
             }
           },
         onError: function(event) {
@@ -407,22 +410,32 @@ function updateMusicButton() {
 
 async function toggleMusic() {
   // Handle YouTube player
-  if (YOUTUBE_VIDEO_ID && state.youtubePlayer) {
+  if (YOUTUBE_VIDEO_ID) {
     state.musicOn = !state.musicOn;
     updateMusicButton();
     
-    if (state.musicOn) {
+    if (state.youtubePlayer && state.youtubeReady) {
       try {
-        if (state.youtubeReady) {
+        if (state.musicOn) {
           state.youtubePlayer.playVideo();
+          console.log('Playing YouTube video');
+        } else {
+          state.youtubePlayer.pauseVideo();
+          console.log('Pausing YouTube video');
         }
       } catch (err) {
-        console.warn("Could not play YouTube video:", err);
-        state.musicOn = false;
+        console.warn("Could not control YouTube video:", err);
+        // Revert the toggle if it failed
+        state.musicOn = !state.musicOn;
         updateMusicButton();
       }
+    } else if (state.musicOn) {
+      // Player not ready yet, wait for it
+      console.log("Waiting for YouTube player to be ready...");
+      // The onReady callback will handle playing when ready
     } else {
-      state.youtubePlayer.pauseVideo();
+      // Trying to pause but player not ready - just update state
+      console.log("Player not ready, state updated to off");
     }
     return;
   }

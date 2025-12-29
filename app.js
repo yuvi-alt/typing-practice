@@ -276,14 +276,30 @@ window.onYouTubeIframeAPIReady = function() {
         onReady: function(event) {
           state.youtubeReady = true;
           event.target.setVolume(35);
+          // If user has already interacted, play immediately
           if (state.musicOn && state.firstInteractionDone) {
-            event.target.playVideo();
+            try {
+              event.target.playVideo();
+            } catch (err) {
+              console.warn('Failed to play on ready:', err);
+            }
+          }
+        },
+        onStateChange: function(event) {
+          // Handle player state changes
+          if (event.data === YT.PlayerState.ENDED) {
+            // Video ended, restart if looping
+            if (state.musicOn) {
+              event.target.playVideo();
+            }
           }
         },
         onError: function(event) {
           console.warn('YouTube player error:', event.data);
           state.musicOn = false;
           updateMusicButton();
+          els.musicBtn.disabled = true;
+          els.musicBtn.title = "YouTube player error";
         }
       }
     });
@@ -297,7 +313,23 @@ async function ensureMusicStarted() {
 
   // Use YouTube if configured
   if (YOUTUBE_VIDEO_ID) {
-    if (youtubeAPIReady && state.youtubePlayer && state.youtubeReady) {
+    // Wait for YouTube API to be ready
+    if (!youtubeAPIReady) {
+      // API not loaded yet, wait a bit and try again
+      setTimeout(() => {
+        if (state.youtubePlayer && state.youtubeReady && state.musicOn) {
+          try {
+            state.youtubePlayer.playVideo();
+          } catch (err) {
+            console.warn('Failed to play YouTube video:', err);
+          }
+        }
+      }, 500);
+      return;
+    }
+    
+    // If player is ready, play immediately
+    if (state.youtubePlayer && state.youtubeReady) {
       if (state.musicOn) {
         try {
           state.youtubePlayer.playVideo();
@@ -305,6 +337,9 @@ async function ensureMusicStarted() {
           console.warn('Failed to play YouTube video:', err);
         }
       }
+    } else if (state.youtubePlayer) {
+      // Player exists but not ready yet, wait for onReady event
+      // The onReady callback will handle playing
     }
     return;
   }

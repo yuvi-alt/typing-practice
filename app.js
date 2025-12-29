@@ -1,17 +1,3 @@
-// Audio configuration - Choose ONE option:
-
-// Option 1: YouTube Video ID (RECOMMENDED - No file hosting needed!)
-// Get the video ID from a YouTube URL: https://www.youtube.com/watch?v=VIDEO_ID
-// Example: "jfKfPfyJRdk" from https://www.youtube.com/watch?v=jfKfPfyJRdk
-// Try a different video that allows embedding
-// If this doesn't work, try: "jfKfPfyJRdk" or disable ad blocker
-const YOUTUBE_VIDEO_ID = "jfKfPfyJRdk"; // Lofi hip hop radio - usually allows embedding
-
-// Option 2: Direct audio file URL (if you have a hosted file)
-const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
-
-// Option 3: Leave both empty to use local file (assets/lofi.mp3) or disable music
-
 const QUOTES = [
   "Slow is smooth, smooth is fast.",
   "Breathe in. Let your hands float on the keys.",

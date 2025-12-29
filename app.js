@@ -1,10 +1,12 @@
 // Audio configuration - set this to your hosted audio URL
 // Leave empty to use local file (assets/lofi.mp3) or disable music
-const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
-
-// Audio configuration - set this to your hosted audio URL
-// Leave empty to use local file (assets/lofi.mp3) or disable music
-const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
+// 
+// RECOMMENDED: Compress your 224MB file to 5-10MB first!
+// Use: https://www.freeconvert.com/compress-mp3
+// Settings: 128-192 kbps, Medium quality
+//
+// Then upload to GitHub Releases and use that URL here
+const AUDIO_URL = ""; // Example: "https://github.com/yuvi-alt/typing-practice/releases/download/v1.0/lofi.mp3"
 
 const QUOTES = [
   "Slow is smooth, smooth is fast.",

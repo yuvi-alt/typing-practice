@@ -34,7 +34,6 @@
           <option value="100">100 words</option>
         </select>
 
-        <button id="musicBtn" aria-label="Toggle music" aria-pressed="true">Music: On</button>
         <button id="newBtn">New</button>
         <button id="restartBtn">Restart</button>
       </div>
@@ -62,7 +61,7 @@
       ></textarea>
 
       <p class="hint">
-        Tip: press <kbd>Esc</kbd> to restart, <kbd>?</kbd> for shortcuts. Music begins on your first keypress.
+        Tip: press <kbd>Esc</kbd> to restart, <kbd>?</kbd> for shortcuts.
       </p>
     </section>
 
@@ -120,17 +119,6 @@
       <button id="closeShortcuts" class="close-btn">Close</button>
     </div>
   </div>
-
-  <!-- Audio: Use external URL, local file, or YouTube -->
-  <audio id="lofi" loop preload="auto" style="display: none;">
-    <!-- Fallback: try external URL first, then local file -->
-    <source id="audioSource" src="" type="audio/mpeg">
-    <source src="assets/lofi.mp3" type="audio/mpeg">
-  </audio>
-  
-  <!-- YouTube IFrame API for YouTube audio playback -->
-  <div id="youtube-player" style="display: none;"></div>
-  <script src="https://www.youtube.com/iframe_api"></script>
 
   <script src="app.js"></script>
 </body>

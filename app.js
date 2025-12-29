@@ -50,11 +50,6 @@ const els = {
   timeLabel: document.getElementById("timeLabel"),
   bestScore: document.getElementById("bestScore"),
 
-  // music
-  lofi: document.getElementById("lofi"),
-  musicBtn: document.getElementById("musicBtn"),
-  youtubePlayer: document.getElementById("youtube-player"),
-
   // modals
   resultsModal: document.getElementById("resultsModal"),
   shortcutsModal: document.getElementById("shortcutsModal"),
@@ -76,12 +71,6 @@ let state = {
   errors: 0,
   wordsLeft: 25,
   totalChars: 0,
-
-  // music state
-  firstInteractionDone: false,
-  musicOn: true,
-  youtubePlayer: null, // YouTube player instance
-  youtubeReady: false,
 };
 
 function pickQuote() {
@@ -252,242 +241,6 @@ function startTimerIfNeeded() {
   }
 }
 
-// YouTube IFrame API callback
-let youtubeAPIReady = false;
-window.onYouTubeIframeAPIReady = function() {
-  youtubeAPIReady = true;
-  console.log('YouTube API ready');
-  if (YOUTUBE_VIDEO_ID && els.youtubePlayer) {
-    try {
-      state.youtubePlayer = new YT.Player('youtube-player', {
-        height: '0',
-        width: '0',
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          enablejsapi: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          loop: 1,
-          modestbranding: 1,
-          playsinline: 1,
-          rel: 0,
-          showinfo: 0,
-        },
-        videoId: YOUTUBE_VIDEO_ID,
-        events: {
-          onReady: function(event) {
-            console.log('YouTube player ready');
-            state.youtubeReady = true;
-            event.target.setVolume(35);
-            // If user has already interacted, play or pause based on state
-            if (state.firstInteractionDone) {
-              try {
-                if (state.musicOn) {
-                  event.target.playVideo();
-                  console.log('Playing YouTube video on ready');
-                } else {
-                  event.target.pauseVideo();
-                  console.log('Pausing YouTube video on ready');
-                }
-              } catch (err) {
-                console.warn('Failed to control video on ready:', err);
-              }
-            }
-          },
-          onStateChange: function(event) {
-            const playerState = event.data;
-            console.log('YouTube player state:', playerState, 'Music on:', state.musicOn);
-            
-            // Handle player state changes
-            if (playerState === YT.PlayerState.ENDED) {
-              // Video ended, restart if looping and music is on
-              if (state.musicOn) {
-                event.target.playVideo();
-              }
-            } else if (playerState === YT.PlayerState.PLAYING) {
-              // Video started playing - check if it should be playing
-              if (!state.musicOn) {
-                console.log('Video playing but music is off - pausing');
-                event.target.pauseVideo();
-              }
-            } else if (playerState === YT.PlayerState.BUFFERING && !state.musicOn) {
-              // Video buffering but music is off - pause it
-              console.log('Video buffering but music is off - pausing');
-              event.target.pauseVideo();
-            }
-          },
-        onError: function(event) {
-          console.error('YouTube player error:', event.data);
-          // Error 150 = video doesn't allow embedding
-          // Error 101 = video not available in your country
-          // Error 100 = video not found
-          let errorMsg = "YouTube player error";
-          if (event.data === 150) {
-            errorMsg = "Video doesn't allow embedding. Try disabling ad blocker or use a different video.";
-          } else if (event.data === 101 || event.data === 100) {
-            errorMsg = "Video not available. Try a different video ID.";
-          }
-          state.musicOn = false;
-          updateMusicButton();
-          els.musicBtn.disabled = true;
-          els.musicBtn.title = errorMsg;
-          console.warn(errorMsg + " (Error code: " + event.data + ")");
-        }
-        }
-      });
-    } catch (err) {
-      console.error('Failed to create YouTube player:', err);
-    }
-  } else {
-    console.warn('YouTube video ID not set or player element not found');
-  }
-};
-
-// Browser needs user gesture to start audio
-async function ensureMusicStarted() {
-  if (state.firstInteractionDone) return;
-  state.firstInteractionDone = true;
-
-  // Use YouTube if configured
-  if (YOUTUBE_VIDEO_ID) {
-    // Wait for YouTube API to be ready
-    if (!youtubeAPIReady) {
-      // API not loaded yet, wait a bit and try again
-      setTimeout(() => {
-        if (state.youtubePlayer && state.youtubeReady && state.musicOn) {
-          try {
-            state.youtubePlayer.playVideo();
-          } catch (err) {
-            console.warn('Failed to play YouTube video:', err);
-          }
-        }
-      }, 500);
-      return;
-    }
-    
-    // If player is ready, play immediately
-    if (state.youtubePlayer && state.youtubeReady) {
-      if (state.musicOn) {
-        try {
-          state.youtubePlayer.playVideo();
-        } catch (err) {
-          console.warn('Failed to play YouTube video:', err);
-        }
-      }
-    } else if (state.youtubePlayer) {
-      // Player exists but not ready yet, wait for onReady event
-      // The onReady callback will handle playing
-    }
-    return;
-  }
-
-  // Fallback to regular audio file
-  if (!els.lofi) return;
-  
-  // Set audio source if external URL is provided
-  if (AUDIO_URL) {
-    const audioSource = els.lofi.querySelector('#audioSource');
-    if (audioSource) {
-      audioSource.src = AUDIO_URL;
-      els.lofi.load(); // Reload with new source
-    }
-  }
-  
-  // Check if audio file exists and is loaded
-  els.lofi.addEventListener('error', () => {
-    // Audio file not found or failed to load
-    state.musicOn = false;
-    updateMusicButton();
-    els.musicBtn.disabled = true;
-    els.musicBtn.title = "Audio file not available";
-  }, { once: true });
-  
-  els.lofi.volume = 0.35;
-
-  if (state.musicOn) {
-    try { 
-      await els.lofi.play(); 
-    } catch (err) {
-      // Audio failed to play (file missing, autoplay blocked, etc.)
-      state.musicOn = false;
-      updateMusicButton();
-    }
-  }
-}
-
-function updateMusicButton() {
-  els.musicBtn.textContent = state.musicOn ? "Music: On" : "Music: Off";
-  els.musicBtn.setAttribute("aria-pressed", String(state.musicOn));
-}
-
-async function toggleMusic() {
-  // Handle YouTube player
-  if (YOUTUBE_VIDEO_ID) {
-    state.musicOn = !state.musicOn;
-    updateMusicButton();
-    
-    if (state.youtubePlayer && state.youtubeReady) {
-      try {
-        const currentState = state.youtubePlayer.getPlayerState();
-        console.log('Current player state:', currentState, 'Music should be:', state.musicOn ? 'ON' : 'OFF');
-        
-        if (state.musicOn) {
-          // Music should be on - play if not already playing
-          if (currentState !== YT.PlayerState.PLAYING) {
-            state.youtubePlayer.playVideo();
-            console.log('Playing YouTube video');
-          }
-        } else {
-          // Music should be off - pause if playing or buffering
-          if (currentState === YT.PlayerState.PLAYING || currentState === YT.PlayerState.BUFFERING) {
-            state.youtubePlayer.pauseVideo();
-            console.log('Pausing YouTube video');
-          }
-        }
-      } catch (err) {
-        console.warn("Could not control YouTube video:", err);
-        // Revert the toggle if it failed
-        state.musicOn = !state.musicOn;
-        updateMusicButton();
-      }
-    } else if (state.musicOn) {
-      // Player not ready yet, wait for it
-      console.log("Waiting for YouTube player to be ready...");
-      // The onReady callback will handle playing when ready
-    } else {
-      // Trying to pause but player not ready - just update state
-      console.log("Player not ready, state updated to off");
-    }
-    return;
-  }
-  
-  // Handle regular audio file
-  if (!els.lofi) return;
-  
-  // Check if audio is available
-  if (els.lofi.error) {
-    alert("Audio file not available. Please add a music file or YouTube video ID.");
-    return;
-  }
-  
-  state.musicOn = !state.musicOn;
-  updateMusicButton();
-
-  if (state.musicOn) {
-    try { 
-      await els.lofi.play(); 
-    } catch (err) {
-      // Failed to play - file might be missing
-      state.musicOn = false;
-      updateMusicButton();
-      console.warn("Could not play audio:", err);
-    }
-  } else {
-    els.lofi.pause();
-  }
-}
 
 function newSession() {
   stopTimer();
@@ -559,7 +312,6 @@ function maybeAutoNextParagraph() {
 }
 
 async function onType() {
-  await ensureMusicStarted();
   startTimerIfNeeded();
 
   const typed = els.input.value;
@@ -571,11 +323,6 @@ async function onType() {
 els.newBtn.addEventListener("click", newSession);
 els.restartBtn.addEventListener("click", newSession);
 els.input.addEventListener("input", onType);
-
-els.musicBtn.addEventListener("click", async () => {
-  await ensureMusicStarted();
-  await toggleMusic();
-});
 
 els.mode.addEventListener("change", newSession);
 els.duration.addEventListener("change", () => {
@@ -663,11 +410,6 @@ els.newBtn.addEventListener("click", newSession);
 els.restartBtn.addEventListener("click", newSession);
 els.input.addEventListener("input", onType);
 
-els.musicBtn.addEventListener("click", async () => {
-  await ensureMusicStarted();
-  await toggleMusic();
-});
-
 els.mode.addEventListener("change", () => {
   updateModeUI();
   newSession();
@@ -709,7 +451,6 @@ window.addEventListener("keydown", (e) => {
 });
 
 // Initialize
-updateMusicButton();
 const best = getBestScore();
 if (best) {
   updateBestScoreDisplay(best.wpm, best.accuracy);

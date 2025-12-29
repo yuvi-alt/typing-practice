@@ -1,3 +1,7 @@
+// Audio configuration - set this to your hosted audio URL
+// Leave empty to use local file (assets/lofi.mp3) or disable music
+const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
+
 const QUOTES = [
   "Slow is smooth, smooth is fast.",
   "Breathe in. Let your hands float on the keys.",

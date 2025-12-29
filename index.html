@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div class="brand">
+        <h1>Typing</h1>
+        <p class="tagline">just a simple typing platform.</p>
+      </div>
+
+      <div class="controls">
+        <select id="mode" aria-label="Mode">
+          <option value="time">Time</option>
+          <option value="quote">Quote</option>
+          <option value="words">Words</option>
+        </select>
+
+        <select id="duration" aria-label="Duration">
+          <option value="30">30s</option>
+          <option value="60" selected>60s</option>
+          <option value="120">120s</option>
+        </select>
+
+        <select id="wordCount" aria-label="Word Count" style="display: none;">
+          <option value="10">10 words</option>
+          <option value="25" selected>25 words</option>
+          <option value="50">50 words</option>
+          <option value="100">100 words</option>
+        </select>
+
+        <button id="musicBtn" aria-label="Toggle music" aria-pressed="true">Music: On</button>
+        <button id="newBtn">New</button>
+        <button id="restartBtn">Restart</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="stats">
+        <div><span id="wpm">0</span><small>WPM</small></div>
+        <div><span id="acc">100</span><small>Accuracy%</small></div>
+        <div><span id="errs">0</span><small>Errors</small></div>
+        <div><span id="time">60</span><small id="timeLabel">Time</small></div>
+      </div>
+
+      <div class="textBox" aria-label="Text to type">
+        <p id="target" class="target"></p>
+      </div>
+
+      <textarea
+        id="input"
+        class="input"
+        placeholder="Start typing..."
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      ></textarea>
+
+      <p class="hint">
+        Tip: press <kbd>Esc</kbd> to restart, <kbd>?</kbd> for shortcuts. Music begins on your first keypress.
+      </p>
+    </section>
+
+    <footer class="foot">
+      <span>Minimal • Dark • Calm</span>
+      <span class="best-score" id="bestScore" style="display: none;"></span>
+    </footer>
+  </main>
+
+  <!-- Results Modal -->
+  <div id="resultsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Session Complete!</h2>
+      <div class="results-stats">
+        <div class="result-stat">
+          <span class="result-value" id="resultWpm">0</span>
+          <span class="result-label">WPM</span>
+        </div>
+        <div class="result-stat">
+          <span class="result-value" id="resultAcc">0</span>
+          <span class="result-label">Accuracy</span>
+        </div>
+        <div class="result-stat">
+          <span class="result-value" id="resultErrs">0</span>
+          <span class="result-label">Errors</span>
+        </div>
+        <div class="result-stat">
+          <span class="result-value" id="resultChars">0</span>
+          <span class="result-label">Characters</span>
+        </div>
+      </div>
+      <div id="newRecord" class="new-record" style="display: none;">🎉 New Personal Best!</div>
+      <button id="closeResults" class="close-btn">Continue</button>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcutsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Keyboard Shortcuts</h2>
+      <div class="shortcuts-list">
+        <div class="shortcut-item">
+          <kbd>Esc</kbd>
+          <span>Restart session</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>?</kbd>
+          <span>Show/hide shortcuts</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Tab</kbd>
+          <span>Focus input (when modal open)</span>
+        </div>
+      </div>
+      <button id="closeShortcuts" class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Put your file here: ./assets/lofi.mp3 -->
+  <audio id="lofi" src="assets/lofi.mp3" loop preload="auto" style="display: none;"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>

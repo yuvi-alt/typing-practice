@@ -121,16 +121,16 @@
     </div>
   </div>
 
-  <!-- Audio: Use external URL or local file -->
-  <!-- Option 1: Use external hosted audio (recommended for GitHub Pages) -->
-  <!-- Replace with your hosted audio URL, or use a free service like: -->
-  <!-- - Upload to GitHub Releases and use raw.githubusercontent.com -->
-  <!-- - Use a free CDN like jsDelivr, or upload to a file hosting service -->
+  <!-- Audio: Use external URL, local file, or YouTube -->
   <audio id="lofi" loop preload="auto" style="display: none;">
     <!-- Fallback: try external URL first, then local file -->
     <source id="audioSource" src="" type="audio/mpeg">
     <source src="assets/lofi.mp3" type="audio/mpeg">
   </audio>
+  
+  <!-- YouTube IFrame API for YouTube audio playback -->
+  <div id="youtube-player" style="display: none;"></div>
+  <script src="https://www.youtube.com/iframe_api"></script>
 
   <script src="app.js"></script>
 </body>

@@ -1,12 +1,14 @@
-// Audio configuration - set this to your hosted audio URL
-// Leave empty to use local file (assets/lofi.mp3) or disable music
-// 
-// RECOMMENDED: Compress your 224MB file to 5-10MB first!
-// Use: https://www.freeconvert.com/compress-mp3
-// Settings: 128-192 kbps, Medium quality
-//
-// Then upload to GitHub Releases and use that URL here
-const AUDIO_URL = ""; // Example: "https://github.com/yuvi-alt/typing-practice/releases/download/v1.0/lofi.mp3"
+// Audio configuration - Choose ONE option:
+
+// Option 1: YouTube Video ID (RECOMMENDED - No file hosting needed!)
+// Get the video ID from a YouTube URL: https://www.youtube.com/watch?v=VIDEO_ID
+// Example: "jfKfPfyJRdk" from https://www.youtube.com/watch?v=jfKfPfyJRdk
+const YOUTUBE_VIDEO_ID = ""; // Example: "jfKfPfyJRdk" (lofi hip hop radio)
+
+// Option 2: Direct audio file URL (if you have a hosted file)
+const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
+
+// Option 3: Leave both empty to use local file (assets/lofi.mp3) or disable music
 
 const QUOTES = [
   "Slow is smooth, smooth is fast.",
@@ -49,6 +51,7 @@ const els = {
   // music
   lofi: document.getElementById("lofi"),
   musicBtn: document.getElementById("musicBtn"),
+  youtubePlayer: document.getElementById("youtube-player"),
 
   // modals
   resultsModal: document.getElementById("resultsModal"),
@@ -75,6 +78,8 @@ let state = {
   // music state
   firstInteractionDone: false,
   musicOn: true,
+  youtubePlayer: null, // YouTube player instance
+  youtubeReady: false,
 };
 
 function pickQuote() {
@@ -245,11 +250,66 @@ function startTimerIfNeeded() {
   }
 }
 
+// YouTube IFrame API callback
+let youtubeAPIReady = false;
+window.onYouTubeIframeAPIReady = function() {
+  youtubeAPIReady = true;
+  if (YOUTUBE_VIDEO_ID && els.youtubePlayer) {
+    state.youtubePlayer = new YT.Player('youtube-player', {
+      height: '0',
+      width: '0',
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        disablekb: 1,
+        enablejsapi: 1,
+        fs: 0,
+        iv_load_policy: 3,
+        loop: 1,
+        modestbranding: 1,
+        playsinline: 1,
+        rel: 0,
+        showinfo: 0,
+      },
+      videoId: YOUTUBE_VIDEO_ID,
+      events: {
+        onReady: function(event) {
+          state.youtubeReady = true;
+          event.target.setVolume(35);
+          if (state.musicOn && state.firstInteractionDone) {
+            event.target.playVideo();
+          }
+        },
+        onError: function(event) {
+          console.warn('YouTube player error:', event.data);
+          state.musicOn = false;
+          updateMusicButton();
+        }
+      }
+    });
+  }
+};
+
 // Browser needs user gesture to start audio
 async function ensureMusicStarted() {
   if (state.firstInteractionDone) return;
   state.firstInteractionDone = true;
 
+  // Use YouTube if configured
+  if (YOUTUBE_VIDEO_ID) {
+    if (youtubeAPIReady && state.youtubePlayer && state.youtubeReady) {
+      if (state.musicOn) {
+        try {
+          state.youtubePlayer.playVideo();
+        } catch (err) {
+          console.warn('Failed to play YouTube video:', err);
+        }
+      }
+    }
+    return;
+  }
+
+  // Fallback to regular audio file
   if (!els.lofi) return;
   
   // Set audio source if external URL is provided
@@ -289,11 +349,33 @@ function updateMusicButton() {
 }
 
 async function toggleMusic() {
+  // Handle YouTube player
+  if (YOUTUBE_VIDEO_ID && state.youtubePlayer) {
+    state.musicOn = !state.musicOn;
+    updateMusicButton();
+    
+    if (state.musicOn) {
+      try {
+        if (state.youtubeReady) {
+          state.youtubePlayer.playVideo();
+        }
+      } catch (err) {
+        console.warn("Could not play YouTube video:", err);
+        state.musicOn = false;
+        updateMusicButton();
+      }
+    } else {
+      state.youtubePlayer.pauseVideo();
+    }
+    return;
+  }
+  
+  // Handle regular audio file
   if (!els.lofi) return;
   
   // Check if audio is available
   if (els.lofi.error) {
-    alert("Audio file not available. Please add a music file to the assets folder.");
+    alert("Audio file not available. Please add a music file or YouTube video ID.");
     return;
   }
   

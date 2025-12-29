@@ -2,6 +2,10 @@
 // Leave empty to use local file (assets/lofi.mp3) or disable music
 const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
 
+// Audio configuration - set this to your hosted audio URL
+// Leave empty to use local file (assets/lofi.mp3) or disable music
+const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"
+
 const QUOTES = [
   "Slow is smooth, smooth is fast.",
   "Breathe in. Let your hands float on the keys.",
@@ -245,6 +249,15 @@ async function ensureMusicStarted() {
   state.firstInteractionDone = true;
 
   if (!els.lofi) return;
+  
+  // Set audio source if external URL is provided
+  if (AUDIO_URL) {
+    const audioSource = els.lofi.querySelector('#audioSource');
+    if (audioSource) {
+      audioSource.src = AUDIO_URL;
+      els.lofi.load(); // Reload with new source
+    }
+  }
   
   // Check if audio file exists and is loaded
   els.lofi.addEventListener('error', () => {

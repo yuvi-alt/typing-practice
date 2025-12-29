@@ -297,15 +297,24 @@ window.onYouTubeIframeAPIReady = function() {
             }
           },
           onStateChange: function(event) {
-            console.log('YouTube player state:', event.data);
+            const playerState = event.data;
+            console.log('YouTube player state:', playerState, 'Music on:', state.musicOn);
+            
             // Handle player state changes
-            if (event.data === YT.PlayerState.ENDED) {
+            if (playerState === YT.PlayerState.ENDED) {
               // Video ended, restart if looping and music is on
               if (state.musicOn) {
                 event.target.playVideo();
               }
-            } else if (event.data === YT.PlayerState.PLAYING && !state.musicOn) {
-              // If video is playing but music should be off, pause it
+            } else if (playerState === YT.PlayerState.PLAYING) {
+              // Video started playing - check if it should be playing
+              if (!state.musicOn) {
+                console.log('Video playing but music is off - pausing');
+                event.target.pauseVideo();
+              }
+            } else if (playerState === YT.PlayerState.BUFFERING && !state.musicOn) {
+              // Video buffering but music is off - pause it
+              console.log('Video buffering but music is off - pausing');
               event.target.pauseVideo();
             }
           },
@@ -421,12 +430,21 @@ async function toggleMusic() {
     
     if (state.youtubePlayer && state.youtubeReady) {
       try {
+        const currentState = state.youtubePlayer.getPlayerState();
+        console.log('Current player state:', currentState, 'Music should be:', state.musicOn ? 'ON' : 'OFF');
+        
         if (state.musicOn) {
-          state.youtubePlayer.playVideo();
-          console.log('Playing YouTube video');
+          // Music should be on - play if not already playing
+          if (currentState !== YT.PlayerState.PLAYING) {
+            state.youtubePlayer.playVideo();
+            console.log('Playing YouTube video');
+          }
         } else {
-          state.youtubePlayer.pauseVideo();
-          console.log('Pausing YouTube video');
+          // Music should be off - pause if playing or buffering
+          if (currentState === YT.PlayerState.PLAYING || currentState === YT.PlayerState.BUFFERING) {
+            state.youtubePlayer.pauseVideo();
+            console.log('Pausing YouTube video');
+          }
         }
       } catch (err) {
         console.warn("Could not control YouTube video:", err);

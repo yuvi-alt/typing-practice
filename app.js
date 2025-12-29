@@ -3,7 +3,7 @@
 // Option 1: YouTube Video ID (RECOMMENDED - No file hosting needed!)
 // Get the video ID from a YouTube URL: https://www.youtube.com/watch?v=VIDEO_ID
 // Example: "jfKfPfyJRdk" from https://www.youtube.com/watch?v=jfKfPfyJRdk
-const YOUTUBE_VIDEO_ID = ""; // Example: "jfKfPfyJRdk" (lofi hip hop radio)
+const YOUTUBE_VIDEO_ID = "5qap5aO4i9A"; // Lofi Girl - 24/7 lofi hip hop radio
 
 // Option 2: Direct audio file URL (if you have a hosted file)
 const AUDIO_URL = ""; // Example: "https://cdn.example.com/lofi.mp3"

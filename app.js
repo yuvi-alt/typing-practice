@@ -281,13 +281,18 @@ window.onYouTubeIframeAPIReady = function() {
             console.log('YouTube player ready');
             state.youtubeReady = true;
             event.target.setVolume(35);
-            // If user has already interacted, play immediately
-            if (state.musicOn && state.firstInteractionDone) {
+            // If user has already interacted, play or pause based on state
+            if (state.firstInteractionDone) {
               try {
-                event.target.playVideo();
-                console.log('Playing YouTube video');
+                if (state.musicOn) {
+                  event.target.playVideo();
+                  console.log('Playing YouTube video on ready');
+                } else {
+                  event.target.pauseVideo();
+                  console.log('Pausing YouTube video on ready');
+                }
               } catch (err) {
-                console.warn('Failed to play on ready:', err);
+                console.warn('Failed to control video on ready:', err);
               }
             }
           },

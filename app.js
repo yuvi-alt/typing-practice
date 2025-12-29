@@ -254,55 +254,65 @@ function startTimerIfNeeded() {
 let youtubeAPIReady = false;
 window.onYouTubeIframeAPIReady = function() {
   youtubeAPIReady = true;
+  console.log('YouTube API ready');
   if (YOUTUBE_VIDEO_ID && els.youtubePlayer) {
-    state.youtubePlayer = new YT.Player('youtube-player', {
-      height: '0',
-      width: '0',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        disablekb: 1,
-        enablejsapi: 1,
-        fs: 0,
-        iv_load_policy: 3,
-        loop: 1,
-        modestbranding: 1,
-        playsinline: 1,
-        rel: 0,
-        showinfo: 0,
-      },
-      videoId: YOUTUBE_VIDEO_ID,
-      events: {
-        onReady: function(event) {
-          state.youtubeReady = true;
-          event.target.setVolume(35);
-          // If user has already interacted, play immediately
-          if (state.musicOn && state.firstInteractionDone) {
-            try {
-              event.target.playVideo();
-            } catch (err) {
-              console.warn('Failed to play on ready:', err);
-            }
-          }
+    try {
+      state.youtubePlayer = new YT.Player('youtube-player', {
+        height: '0',
+        width: '0',
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          enablejsapi: 1,
+          fs: 0,
+          iv_load_policy: 3,
+          loop: 1,
+          modestbranding: 1,
+          playsinline: 1,
+          rel: 0,
+          showinfo: 0,
         },
-        onStateChange: function(event) {
-          // Handle player state changes
-          if (event.data === YT.PlayerState.ENDED) {
-            // Video ended, restart if looping
-            if (state.musicOn) {
-              event.target.playVideo();
+        videoId: YOUTUBE_VIDEO_ID,
+        events: {
+          onReady: function(event) {
+            console.log('YouTube player ready');
+            state.youtubeReady = true;
+            event.target.setVolume(35);
+            // If user has already interacted, play immediately
+            if (state.musicOn && state.firstInteractionDone) {
+              try {
+                event.target.playVideo();
+                console.log('Playing YouTube video');
+              } catch (err) {
+                console.warn('Failed to play on ready:', err);
+              }
             }
+          },
+          onStateChange: function(event) {
+            console.log('YouTube player state:', event.data);
+            // Handle player state changes
+            if (event.data === YT.PlayerState.ENDED) {
+              // Video ended, restart if looping
+              if (state.musicOn) {
+                event.target.playVideo();
+              }
+            }
+          },
+          onError: function(event) {
+            console.error('YouTube player error:', event.data);
+            state.musicOn = false;
+            updateMusicButton();
+            els.musicBtn.disabled = true;
+            els.musicBtn.title = "YouTube player error";
           }
-        },
-        onError: function(event) {
-          console.warn('YouTube player error:', event.data);
-          state.musicOn = false;
-          updateMusicButton();
-          els.musicBtn.disabled = true;
-          els.musicBtn.title = "YouTube player error";
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error('Failed to create YouTube player:', err);
+    }
+  } else {
+    console.warn('YouTube video ID not set or player element not found');
   }
 };
 
